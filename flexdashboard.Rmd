@@ -49,7 +49,6 @@ data <- data %>%
                               levels = c('Grand séisme ≤ 6', 'Très grand séisme ≤ 6,9',
                                          'Séisme majeur ≤ 7,9', 'Séisme énorme ≤ 8,9', 'Séisme énorme et rare > 8.9'))) 
 
-data$Date <- as.factor(data$Date)
 data$Type <- as.factor(data$Type)
 data$Magnitude.Type <- as.factor(data$Magnitude.Type)
 data <- data %>% filter(Magnitude.Type != '')
@@ -68,7 +67,7 @@ dbTectonic$plate = str_to_upper(dbTectonic$plate)
 
 tsunami <- read.csv ("tsunami.csv", header = TRUE, sep = ",", dec = ".")
 
-tsunami <- tsunami %>% filter(Year >= 1965)%>% filter(is.na(Longitude) == FALSE)%>% filter(is.na(Latitude) == FALSE)
+tsunami <- tsunami %>% filter(Year >= 1965) %>% filter(Year <= 2016) %>%filter(is.na(Longitude) == FALSE)%>% filter(is.na(Latitude) == FALSE)
 
 ```
 
@@ -84,11 +83,12 @@ Column {.tabset}
 ```{r}
 # Séismes
 group_year <- data_clean %>% group_by(Date)%>% summarise (n = n(), mean_mag = mean(Magnitude))
+group_year$Date <- as.numeric(group_year$Date)
 
 s <-ggplot(data = group_year) +
   geom_bar(aes(x = Date, y=n, fill = mean_mag), stat="identity")+
   ggtitle("Nombre de tremblements de terre par année", subtitle = "entre 1965 et 2016")+
-  theme(axis.text.x = element_text(size=6, angle=80))+
+  theme(axis.text.x = element_text(size=10))+
   scale_fill_gradient(low = "yellow", high = "#e65000" )+
   labs(fill = "Magnitude \n Moyenne", x = "Année", y="Nombre de séismes")
 s
@@ -99,12 +99,11 @@ s
 ```{r}
 # Tsunamis
 group_year_tsunami <- tsunami %>% group_by(Year)%>% summarise (n = n())
-group_year_tsunami$Year <- as.factor(group_year_tsunami$Year)
 
 t <-ggplot(data = group_year_tsunami) +
   geom_bar(aes(x = Year, y=n), stat="identity", fill = "darkblue")+
   ggtitle("Nombre de tsunamis par année", subtitle = "entre 1965 et 2016")+
-  theme(axis.text.x = element_text(size=6, angle=80))+
+  theme(axis.text.x = element_text(size=10))+
   scale_fill_gradient(low = "yellow", high = "#e65000" )+
   labs(x = "Année", y = "Nombre de tsunamis")
 t
