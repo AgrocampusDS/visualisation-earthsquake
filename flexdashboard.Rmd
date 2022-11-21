@@ -1,13 +1,12 @@
 ---
 title: "Visualisation des séismes dans le monde de 1965 à 2016"
-author: "Niels André, Floriane Cornue & Marion Corbera"
+author: "Niels André, Floriane Cornué & Marion Corbera"
 output: 
   flexdashboard::flex_dashboard:
     theme: bootstrap
     orientation: columns
     vertical_layout: fill
     navbar:
-      - { title: "Moodle", href: "https://tice.agrocampus-ouest.fr/course/view.php?id=6726", align: left }
       - { icon: "fa-github", href: "https://github.com/AgrocampusDS/visualisation-earthsquake", align: right }
 params:
   setup_path: ../resources/
@@ -74,10 +73,13 @@ tsunami <- tsunami %>% filter(Year >= 1965)%>% filter(is.na(Longitude) == FALSE)
 ```
 
 
-Column {.tabset}
------------------------------------------------------------------------
+Graphiques séismes et tsunamis
+=======================================================================
 
-### Graphiques du nombre de séismes et de tsunamis par an
+Column {.tabset}
+------------------------------------------------
+
+### Seismes en fonction de l'année
 
 ```{r}
 # Séismes
@@ -90,7 +92,11 @@ s <-ggplot(data = group_year) +
   scale_fill_gradient(low = "yellow", high = "#e65000" )+
   labs(fill = "Magnitude Moyenne", x = "Année")
 s
+```
 
+### Tsunamis en fonction de l'année
+
+```{r}
 # Tsunamis
 group_year_tsunami <- tsunami %>% group_by(Year)%>% summarise (n = n())
 
@@ -103,7 +109,8 @@ t <-ggplot(data = group_year_tsunami) +
 t
 ```
 
-### Carte des séismes et tsunamis de 1965 à 2016
+Carte des séismes et tsunamis
+=======================================================================
 ```{r}
 # Palette de couleur
 pal <- colorFactor(c("#fad453","yellow","#e65000","red","#5a213e"), domain = NULL)
@@ -175,7 +182,8 @@ map_tsunami %>%
   )
 ```
 
-### Evolution des séismes et tsunamis en fonction de l'année
+Evolution des séismes et tsunamis
+=======================================================================
 
 ```{r}
 year = 2000 #to 2016
