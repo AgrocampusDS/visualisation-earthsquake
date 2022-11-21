@@ -31,6 +31,7 @@ require(dplyr)
 require(stringr)
 require(leaflet)
 require(ggplot2)
+require(magick)
 ```
 
 
@@ -179,84 +180,15 @@ map_tsunami %>%
                                      'Séisme énorme ≤ 8,9', 
                                      'Séisme énorme et rare > 8.9'),
                    options = layersControlOptions(collapsed = FALSE)
-  )
+  )%>%
+  addScaleBar(position = "bottomleft")
 ```
 
 Evolution des séismes et tsunamis
 =======================================================================
 
 ```{r}
-year = 2000 #to 2016
-
-map_year = leaflet()%>% addProviderTiles("Esri.WorldImagery")
-plates = dbTectonic$plate %>% unique() 
-
-for (plate1 in plates){ #For each plate
-  data = dbTectonic[(dbTectonic$plate == plate1),] %>% unique() 
-  BorneInf = 0
-  for (i in 1:nrow(data)){
-    if(i + 1 <= nrow(data)){
-      if(abs(data$lon[i]-data$lon[i + 1])>300){
-        table1 = data %>% slice((BorneInf + 1):i)
-        BorneInf = i
-        map_year = map_year %>% 
-          addPolylines(data = table1, lat = ~lat,lng =~lon,weight = 2,color = "black")
-        
-      }
-    }
-  }
-  table1 = data %>%  slice((BorneInf + 1):nrow(data))
-  map_year = map_year %>% addPolylines(data = table1, 
-                                       lat = ~lat,
-                                       lng =~lon,weight = 2,
-                                       color = "black")
-}
-
-
-#filter 
-tsunami_year <- tsunami %>% filter(Year == year)%>% filter(is.na(Longitude) == FALSE)%>% filter(is.na(Latitude) == FALSE)
-
-earthquake_year <- data_clean %>% filter(Date == year)
-
-pal <- colorFactor(c("#fad453","yellow","#e65000","red","#5a213e"), domain = NULL)
-
-labelSeismesAnnee <- paste(
-  "Profondeur: ", earthquake_year$Depth, "<br/>",
-  "Magnitude: ", earthquake_year$Magnitude, "<br/>") %>%
-  lapply(htmltools::HTML)
-
-labelTsunamisAnnee <- paste(
-  "Localisation: ",tsunami_year$Location.Name, "<br/>",
-  "Pays: ", tsunami_year$Country, "<br/>",
-  "Magnitude du séisme: ",tsunami_year$Earthquake.Magnitude, "<br/>") %>%
-  lapply(htmltools::HTML)
-
-#map creation
-map_year %>% 
-  addCircleMarkers(data = tsunami_year,
-                   ~Longitude,
-                   ~Latitude,
-                   fillColor = "blue",
-                   radius = 1,
-                   opacity = 1,
-                   label = labelTsunamisAnnee)%>%
-  addCircleMarkers(data = earthquake_year, ~Longitude,
-                   ~Latitude,
-                   fillColor = ~pal(dangerosite),
-                   group = ~dangerosite,
-                   stroke = FALSE, 
-                   fillOpacity =~Magnitude/10,
-                   radius= ~(exp(Magnitude/4)/2),
-                   label = labelSeismesAnnee) %>%
-  addLegend (data = earthquake_year, pal = pal, values = ~dangerosite, 
-             title = "Dangerosité", 
-             position= "bottomright") %>%
-  addLayersControl(overlayGroups = c('Grand séisme ≤ 6',
-                                     'Très grand séisme ≤ 6,9',
-                                     'Séisme majeur ≤ 7,9',
-                                     'Séisme énorme ≤ 8,9', 
-                                     'Séisme énorme et rare > 8.9'),
-                   options = layersControlOptions(collapsed = FALSE)
-  )
+gif <- magick::image_read("YearsAnimation.gif")
+gif
 
 ```
