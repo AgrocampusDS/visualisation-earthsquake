@@ -1,6 +1,6 @@
 ---
-title: "Un joli titre pour le dashboard"
-author: "Marie-Pierre Etienne"
+title: "Visualisation des séismes dans le monde de 1965 à 2016"
+author: "Niels André, Floriane Cornue & Marion Corbera"
 output: 
   flexdashboard::flex_dashboard:
     theme: bootstrap
@@ -8,8 +8,7 @@ output:
     vertical_layout: fill
     navbar:
       - { title: "Moodle", href: "https://tice.agrocampus-ouest.fr/course/view.php?id=6726", align: left }
-      - { icon: "fa-twitter", href: "https://twitter.com/marie_etienne", align: right }
-      - { icon: "fa-linkedin", href: "https://www.linkedin.com/in/marie-etienne-818a7115/", align: right }
+      - { icon: "fa-github", href: "https://github.com/AgrocampusDS/visualisation-earthsquake", align: right }
 params:
   setup_path: ../resources/
 ---
@@ -40,7 +39,6 @@ Column {data-width=650}
 ### An easy solution for dashboard
 
 ```{r, echo = TRUE}
-#install.package('flexdasboard')
 #rmarkdown::draft("dashboard.Rmd", template = "flex_dashboard", package = "flexdashboard")
 ```
 
