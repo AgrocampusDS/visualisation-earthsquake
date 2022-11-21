@@ -90,7 +90,7 @@ s <-ggplot(data = group_year) +
   ggtitle("Nombre de tremblements de terre par année", subtitle = "entre 1965 et 2016")+
   theme(axis.text.x = element_text(size=5, angle=80))+
   scale_fill_gradient(low = "yellow", high = "#e65000" )+
-  labs(fill = "Magnitude Moyenne", x = "Année", y="Nombre de séismes")
+  labs(fill = "Magnitude \n Moyenne", x = "Année", y="Nombre de séismes")
 s
 ```
 
