@@ -64,54 +64,47 @@ dbTectonic$lat = as.numeric(dbTectonic$lat)
 dbTectonic$lon = as.numeric(dbTectonic$lon)
 dbTectonic$plate = str_to_upper(dbTectonic$plate)
 
-# Tsunamis
-
-tsunami <- read.csv ("tsunami.csv", header = TRUE, sep = ",", dec = ".")
-
-tsunami <- tsunami %>% filter(Year >= 1965) %>% filter(Year <= 2016) %>%filter(is.na(Longitude) == FALSE)%>% filter(is.na(Latitude) == FALSE)
-
 ```
 
-
-Graphiques séismes et tsunamis
-=======================================================================
-
-Column {.tabset}
+{.tabset}
 ------------------------------------------------
-
-### Seismes en fonction de l'année
-
-```{r}
-# Séismes
-group_year <- data_clean %>% group_by(Date)%>% summarise (n = n(), mean_mag = mean(Magnitude))
-group_year$Date <- as.numeric(group_year$Date)
-
-s <-ggplot(data = group_year) +
-  geom_bar(aes(x = Date, y=n, fill = mean_mag), stat="identity")+
-  ggtitle("Nombre de tremblements de terre par année", subtitle = "entre 1965 et 2016")+
-  theme(axis.text.x = element_text(size=10))+
-  scale_fill_gradient(low = "yellow", high = "#e65000" )+
-  labs(fill = "Magnitude \n Moyenne", x = "Année", y="Nombre de séismes")
-s
-```
-
-### Tsunamis en fonction de l'année
-
-```{r}
-# Tsunamis
-group_year_tsunami <- tsunami %>% group_by(Year)%>% summarise (n = n())
-
-t <-ggplot(data = group_year_tsunami) +
-  geom_bar(aes(x = Year, y=n), stat="identity", fill = "darkblue")+
-  ggtitle("Nombre de tsunamis par année", subtitle = "entre 1965 et 2016")+
-  theme(axis.text.x = element_text(size=10))+
-  scale_fill_gradient(low = "yellow", high = "#e65000" )+
-  labs(x = "Année", y = "Nombre de tsunamis")
-t
-```
-
-Carte des séismes et tsunamis
+Carte des plaques tectoniques
 =======================================================================
+
+```{r}
+
+map_tectonique = leaflet()%>% addProviderTiles("Esri.WorldImagery")
+plates = dbTectonic$plate %>% unique() 
+
+for (plate1 in plates){ #For each plate
+  data = dbTectonic[(dbTectonic$plate == plate1),] %>% unique() 
+  BorneInf = 0
+  for (i in 1:nrow(data)){
+    if(i + 1 <= nrow(data)){
+      if(abs(data$lon[i]-data$lon[i + 1])>300){
+        table1 = data %>% slice((BorneInf + 1):i)
+        BorneInf = i
+        map_tectonique = map_tectonique %>% 
+          addPolylines(data = table1, lat = ~lat,lng =~lon,weight = 2,color = "black")
+        
+      }
+    }
+  }
+  table1 = data %>%  slice((BorneInf + 1):nrow(data))
+  map_tectonique= map_tectonique %>% addPolylines(data = table1, 
+                                             lat = ~lat,
+                                             lng =~lon,weight = 2,
+                                             color = "black")
+}
+
+map_tectonique
+```
+
+
+Carte des séismes
+=======================================================================
+
+
 ```{r}
 # Palette de couleur
 pal <- colorFactor(c("#fad453","yellow","#e65000","red","#5a213e"), domain = NULL)
@@ -124,15 +117,7 @@ labelSeismes <- paste(
   lapply(htmltools::HTML)
 
 #pour afficher des données de plusieurs data_sets, il ne faut pas déclarer de data frame dans leaflet(), mais les mettre dans data de chaque objet
-map_tsunami = leaflet()%>% addProviderTiles("Esri.WorldImagery")
-plates = dbTectonic$plate %>% unique() 
-
-labelTsunamis <- paste(
-  "Localisation: ",tsunami$Location.Name, "<br/>",
-  "Pays: ", tsunami$Country, "<br/>",
-  "Magnitude du séisme: ",tsunami$Earthquake.Magnitude, "<br/>",
-  "Année: ",tsunami$Year, "<br/>") %>%
-  lapply(htmltools::HTML)
+map_seismes = leaflet()%>% addProviderTiles("Esri.WorldImagery")
 
 for (plate1 in plates){ #For each plate
   data = dbTectonic[(dbTectonic$plate == plate1),] %>% unique() 
@@ -142,27 +127,20 @@ for (plate1 in plates){ #For each plate
       if(abs(data$lon[i]-data$lon[i + 1])>300){
         table1 = data %>% slice((BorneInf + 1):i)
         BorneInf = i
-        map_tsunami = map_tsunami %>% 
+        map_seismes = map_seismes %>% 
           addPolylines(data = table1, lat = ~lat,lng =~lon,weight = 2,color = "black")
         
       }
     }
   }
   table1 = data %>%  slice((BorneInf + 1):nrow(data))
-  map_tsunami = map_tsunami %>% addPolylines(data = table1, 
+  map_seismes = map_seismes %>% addPolylines(data = table1, 
                                              lat = ~lat,
                                              lng =~lon,weight = 2,
                                              color = "black")
 }
 
-map_tsunami %>% 
-  addCircleMarkers(data = tsunami,
-                   ~Longitude,
-                   ~Latitude,
-                   fillColor = "blue",
-                   radius = 1,
-                   opacity = 1,
-                   label = labelTsunamis)%>%
+map_seismes%>% 
   addCircleMarkers(data = data_clean, ~Longitude,
                    ~Latitude,
                    fillColor = ~pal(dangerosite),
@@ -184,11 +162,22 @@ map_tsunami %>%
   addScaleBar(position = "bottomleft")
 ```
 
-Evolution des séismes et tsunamis
+Seismes en fonction de l'année
 =======================================================================
 
-```{r}
-gif <- magick::image_read("YearsAnimation.gif")
-gif
 
+### Magnitude moyenne des séismes en fonction de l'année
+
+```{r}
+# Séismes
+group_year <- data_clean %>% group_by(Date)%>% summarise (n = n(), mean_mag = mean(Magnitude))
+group_year$Date <- as.numeric(group_year$Date)
+
+s <-ggplot(data = group_year) +
+  geom_bar(aes(x = Date, y=n, fill = mean_mag), stat="identity")+
+  ggtitle("Nombre de tremblements de terre par année", subtitle = "entre 1965 et 2016")+
+  theme(axis.text.x = element_text(size=10))+
+  scale_fill_gradient(low = "yellow", high = "#e65000" )+
+  labs(fill = "Magnitude \n Moyenne", x = "Année", y="Nombre de séismes")
+s
 ```
