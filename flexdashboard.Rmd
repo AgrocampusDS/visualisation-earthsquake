@@ -62,8 +62,7 @@ data_clean <- data_clean[order(data_clean$Magnitude),]
 dbTectonic <- read.csv("tectonic.csv", sep=";")
 dbTectonic$lat = as.numeric(dbTectonic$lat)
 dbTectonic$lon = as.numeric(dbTectonic$lon)
-dbTectonic$plate = str_to_upper(dbTectonic$plate)
-
+dbTectonic$plate = as.factor(str_to_upper(dbTectonic$plate))
 ```
 
 {.tabset}
