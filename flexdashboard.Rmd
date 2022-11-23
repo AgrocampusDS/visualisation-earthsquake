@@ -26,6 +26,7 @@ color:black!important;
 
 
 ```{r setup, include=FALSE}
+require(oceanis)
 require(flexdashboard)
 require(dplyr)
 require(stringr)
@@ -191,7 +192,8 @@ map_tectonique <- map_tectonique %>%
              title = "Mouvement des plaques", 
              position= "bottomright") %>%
   addAwesomeMarkers(data = div,~long, ~lat, icon=icons.div, label=~nature) %>%
-  addAwesomeMarkers(data = conv,~long, ~lat, icon=icons.conv, label=~nature)
+  addAwesomeMarkers(data = conv,~long, ~lat, icon=icons.conv, label=~nature) %>%
+  add_titre(titre = "Plaques lithosphériques, convergences et divergences")
 
 map_tectonique
 ```
@@ -251,7 +253,9 @@ map_seismes%>%
                                      'Séisme énorme et rare > 8.9'),
                    options = layersControlOptions(collapsed = FALSE)
   )%>%
-  addScaleBar(position = "bottomleft")
+  addScaleBar(position = "bottomleft") %>%
+  add_titre(titre = "Cartes des séismes de 1965 à 2016")
+
 ```
 
 Seismes en fonction de l'année
