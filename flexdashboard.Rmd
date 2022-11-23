@@ -31,8 +31,6 @@ require(dplyr)
 require(stringr)
 require(leaflet)
 require(ggplot2)
-require(magick)
-require(fontawesome)
 ```
 
 
@@ -91,7 +89,7 @@ for (plate1 in plates){ #For each plate
                                              lng =~lon,weight = 3,
                                              color = "lightblue")
 }
-################################################################################
+
 div <- div_conv %>% filter(nature == 'divergence')
 icons.div <- makeAwesomeIcon(
   icon = "resize-full",
@@ -104,8 +102,8 @@ icons.conv <- makeAwesomeIcon(
   library = "glyphicon",
   markerColor = "green", 
 )
-################################################################################
-#pal2 <- colorFactor(c("green", "purple"), domain = NULL)
+
+
 map_tectonique <- map_tectonique %>%
   addLabelOnlyMarkers(
     lng = 10, lat = 7.4,
@@ -188,12 +186,7 @@ map_tectonique <- map_tectonique %>%
         "font-size" = "3"
       ), opacity = 0.8))%>% 
 
-  #addCircleMarkers(data = div_conv, ~long,
-                  # ~lat,fillColor =  ~pal2(nature),
-                   #group = ~nature, color = c("green", "purple"),
-                   #stroke = FALSE, 
-                   #fillOpacity = 1,
-                   #radius= 8 )%>%
+
   addLegend (data = div_conv,labels = c("Divergent", "Convergent"), color = c("green", "purple"), values = ~nature, 
              title = "Mouvement des plaques", 
              position= "bottomright") %>%
