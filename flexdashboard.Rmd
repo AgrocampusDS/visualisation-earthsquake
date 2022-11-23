@@ -57,6 +57,7 @@ data <- data %>% filter(Type == 'Earthquake') # Nous ne voulons visualiser que l
 data_clean <- data[-c(7383,20468, 3360),c(1,3,4,5,6,9,22)]
 data_clean <- data_clean[order(data_clean$Magnitude),]
 
+div_conv <- read.csv("div_conv.csv", header = TRUE, sep = ";", dec = ",")
 # Plaques tectoniques
 
 dbTectonic <- read.csv("tectonic.csv", sep=";")
@@ -84,7 +85,7 @@ for (plate1 in plates){ #For each plate
         table1 = data %>% slice((BorneInf + 1):i)
         BorneInf = i
         map_tectonique = map_tectonique %>% 
-          addPolylines(data = table1, lat = ~lat,lng =~lon,weight = 2,color = "black")
+          addPolylines(data = table1, lat = ~lat,lng =~lon,weight = 3,color = "lightblue")
         
       }
     }
@@ -92,10 +93,101 @@ for (plate1 in plates){ #For each plate
   table1 = data %>%  slice((BorneInf + 1):nrow(data))
   map_tectonique= map_tectonique %>% addPolylines(data = table1, 
                                              lat = ~lat,
-                                             lng =~lon,weight = 2,
-                                             color = "black")
+                                             lng =~lon,weight = 3,
+                                             color = "lightblue")
 }
+pal2 <- colorFactor(c("green", "purple"), domain = NULL)
 
+map_tectonique <- map_tectonique %>%
+  addLabelOnlyMarkers(
+    lng = 10, lat = 7.4,
+    label = "Plaque Africaine",
+    labelOptions = labelOptions(noHide = T, direction = "bottom",
+      style = list(
+        "color" = "black",
+        "font-family" = "arial",
+        "font-style" = "italic",
+        "font-size" = "3"
+      ), opacity = 0.8))%>%
+  addLabelOnlyMarkers(
+    lng = 46, lat = 22,
+    label = "Plaque Arabique",
+    labelOptions = labelOptions(noHide = T, direction = "bottom",
+      style = list(
+        "color" = "black",
+        "font-family" = "arial",
+        "font-style" = "italic",
+        "font-size" = "3"
+      ), opacity = 0.8))%>%
+  addLabelOnlyMarkers(
+    lng = 95, lat = -16,
+    label = "Plaque Indo-Australienne",
+    labelOptions = labelOptions(noHide = T, direction = "bottom",
+      style = list(
+        "color" = "black",
+        "font-family" = "arial",
+        "font-style" = "italic",
+        "font-size" = "3"
+      ), opacity = 0.8))%>%
+  addLabelOnlyMarkers(
+    lng = 87, lat = 49,
+    label = "Plaque Eurasienne",
+    labelOptions = labelOptions(noHide = T, direction = "bottom",
+      style = list(
+        "color" = "black",
+        "font-family" = "arial",
+        "font-style" = "italic",
+        "font-size" = "3"
+      ), opacity = 0.8))%>%
+  addLabelOnlyMarkers(
+    lng = -49, lat = -15,
+    label = "Plaque Sud-Américaine",
+    labelOptions = labelOptions(noHide = T, direction = "bottom",
+      style = list(
+        "color" = "black",
+        "font-family" = "arial",
+        "font-style" = "italic",
+        "font-size" = "3"
+      ), opacity = 0.8))%>%
+  addLabelOnlyMarkers(
+    lng = -90, lat = 33,
+    label = "Plaque Nord-Américaine",
+    labelOptions = labelOptions(noHide = T, direction = "bottom",
+      style = list(
+        "color" = "black",
+        "font-family" = "arial",
+        "font-style" = "italic",
+        "font-size" = "3"
+      ), opacity = 0.8))%>%
+  addLabelOnlyMarkers(
+    lng = -104, lat = -18,
+    label = "Plaque de Nazca",
+    labelOptions = labelOptions(noHide = T, direction = "bottom",
+      style = list(
+        "color" = "black",
+        "font-family" = "arial",
+        "font-style" = "italic",
+        "font-size" = "3"
+      ), opacity = 0.8))%>%
+  addLabelOnlyMarkers(
+    lng = -146, lat = 13,
+    label = "Plaque Pacifique",
+    labelOptions = labelOptions(noHide = T, direction = "bottom",
+      style = list(
+        "color" = "black",
+        "font-family" = "arial",
+        "font-style" = "italic",
+        "font-size" = "3"
+      ), opacity = 0.8))%>% 
+  addCircleMarkers(data = div_conv, ~long,
+                   ~lat,fillColor =  ~pal2(nature),
+                   group = ~nature, color = c("green", "purple"),
+                   stroke = FALSE, 
+                   fillOpacity = 1,
+                   radius= 8 )%>%
+  addLegend (data = div_conv,labels = c("Divergent", "Convergent"), color = c("green", "purple"), values = ~nature, 
+             title = "Mouvement des plaques", 
+             position= "bottomright")
 map_tectonique
 ```
 
