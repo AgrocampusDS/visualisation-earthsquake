@@ -276,6 +276,3 @@ s <-ggplot(data = group_year) +
   labs(fill = "Magnitude \n Moyenne", x = "Année", y="Nombre de séismes")
 s
 ```
-
-
-
