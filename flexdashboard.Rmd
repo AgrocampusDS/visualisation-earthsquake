@@ -14,8 +14,8 @@ params:
 
 <style>                     
 .navbar {
-  background-color:#46ACC8;
-  border-color:#46ACC8;
+background-color:#46ACC8;
+border-color:#46ACC8;
 }
 .navbar-brand {
 color:black!important;
@@ -39,6 +39,7 @@ require(ggplot2)
 # Seismes
 data <- read.table('earthquake.csv', sep = ',', dec = '.', header = TRUE)
 data$Date <- substr(x= data$Date, start = 7, stop = 10)
+#assignation de la dangerosite de séismes
 data <- data %>%
   mutate(dangerosite= case_when(Magnitude <= 6 ~ 'Grand séisme ≤ 6',
                                 Magnitude <= 6.9 ~ 'Très grand séisme ≤ 6,9',
@@ -46,16 +47,19 @@ data <- data %>%
                                 Magnitude <= 8.9 ~ 'Séisme énorme ≤ 8,9',
                                 Magnitude > 8.9 ~ 'Séisme énorme et rare > 8.9')) %>%
   mutate(dangerosite = factor(dangerosite,
-                              levels = c('Grand séisme ≤ 6', 'Très grand séisme ≤ 6,9',
-                                         'Séisme majeur ≤ 7,9', 'Séisme énorme ≤ 8,9', 'Séisme énorme et rare > 8.9'))) 
+                              levels = c('Grand séisme ≤ 6', 
+                                         'Très grand séisme ≤ 6,9',
+                                         'Séisme majeur ≤ 7,9',
+                                         'Séisme énorme ≤ 8,9', 
+                                         'Séisme énorme et rare > 8.9'))) 
 data$Type <- as.factor(data$Type)
 data$Magnitude.Type <- as.factor(data$Magnitude.Type)
 data <- data %>% filter(Magnitude.Type != '')
 data <- data %>% filter(Type == 'Earthquake') # Nous ne voulons visualiser que les tremblements de terre
-data_clean <- data[-c(7383,20468, 3360),c(1,3,4,5,6,9,22)]
+data_clean <- data[-c(7383, 20468, 3360),c(1, 3, 4, 5, 6, 9, 22)]
 data_clean <- data_clean[order(data_clean$Magnitude),]
 div_conv <- read.csv("div_conv.csv", header = TRUE, sep = ";", dec = ",")
-# Plaques tectoniques
+# Fichier des Plaques tectoniques
 dbTectonic <- read.csv("tectonic.csv", sep=";")
 dbTectonic$lat = as.numeric(dbTectonic$lat)
 dbTectonic$lon = as.numeric(dbTectonic$lon)
@@ -66,7 +70,7 @@ dbTectonic$plate = as.factor(str_to_upper(dbTectonic$plate))
 ------------------------------------------------
 Carte des plaques tectoniques
 =======================================================================
-
+### Les plaques tectoniques et leurs interactions
 ```{r}
 map_tectonique = leaflet()%>% addProviderTiles("Esri.WorldImagery")
 plates = dbTectonic$plate %>% unique() 
@@ -86,9 +90,9 @@ for (plate1 in plates){ #For each plate
   }
   table1 = data %>%  slice((BorneInf + 1):nrow(data))
   map_tectonique= map_tectonique %>% addPolylines(data = table1, 
-                                             lat = ~lat,
-                                             lng =~lon,weight = 3,
-                                             color = "lightblue")
+                                                  lat = ~lat,
+                                                  lng =~lon,weight = 3,
+                                                  color = "lightblue")
 }
 
 div <- div_conv %>% filter(nature == 'divergence')
@@ -103,97 +107,98 @@ icons.conv <- makeAwesomeIcon(
   library = "glyphicon",
   markerColor = "green", 
 )
-
+#on a obtenu le fond de carte avec le tracé des plaques tectoniques
+#on veut maitnenant ajouter les noms des plaques comme des étiquettes
+#ainsi que les interrations aux limites des plaques
 
 map_tectonique <- map_tectonique %>%
   addLabelOnlyMarkers(
     lng = 10, lat = 7.4,
     label = "Plaque Africaine",
     labelOptions = labelOptions(noHide = T, direction = "bottom",
-      style = list(
-        "color" = "black",
-        "font-family" = "arial",
-        "font-style" = "italic",
-        "font-size" = "3"
-      ), opacity = 0.8))%>%
+                                style = list(
+                                  "color" = "black",
+                                  "font-family" = "arial",
+                                  "font-style" = "italic",
+                                  "font-size" = "3"
+                                ), opacity = 0.8))%>%
   addLabelOnlyMarkers(
     lng = 46, lat = 22,
     label = "Plaque Arabique",
     labelOptions = labelOptions(noHide = T, direction = "bottom",
-      style = list(
-        "color" = "black",
-        "font-family" = "arial",
-        "font-style" = "italic",
-        "font-size" = "3"
-      ), opacity = 0.8))%>%
+                                style = list(
+                                  "color" = "black",
+                                  "font-family" = "arial",
+                                  "font-style" = "italic",
+                                  "font-size" = "3"
+                                ), opacity = 0.8))%>%
   addLabelOnlyMarkers(
     lng = 95, lat = -16,
     label = "Plaque Indo-Australienne",
     labelOptions = labelOptions(noHide = T, direction = "bottom",
-      style = list(
-        "color" = "black",
-        "font-family" = "arial",
-        "font-style" = "italic",
-        "font-size" = "3"
-      ), opacity = 0.8))%>%
+                                style = list(
+                                  "color" = "black",
+                                  "font-family" = "arial",
+                                  "font-style" = "italic",
+                                  "font-size" = "3"
+                                ), opacity = 0.8))%>%
   addLabelOnlyMarkers(
     lng = 87, lat = 49,
     label = "Plaque Eurasienne",
     labelOptions = labelOptions(noHide = T, direction = "bottom",
-      style = list(
-        "color" = "black",
-        "font-family" = "arial",
-        "font-style" = "italic",
-        "font-size" = "3"
-      ), opacity = 0.8))%>%
+                                style = list(
+                                  "color" = "black",
+                                  "font-family" = "arial",
+                                  "font-style" = "italic",
+                                  "font-size" = "3"
+                                ), opacity = 0.8))%>%
   addLabelOnlyMarkers(
     lng = -49, lat = -15,
     label = "Plaque Sud-Américaine",
     labelOptions = labelOptions(noHide = T, direction = "bottom",
-      style = list(
-        "color" = "black",
-        "font-family" = "arial",
-        "font-style" = "italic",
-        "font-size" = "3"
-      ), opacity = 0.8))%>%
+                                style = list(
+                                  "color" = "black",
+                                  "font-family" = "arial",
+                                  "font-style" = "italic",
+                                  "font-size" = "3"
+                                ), opacity = 0.8))%>%
   addLabelOnlyMarkers(
     lng = -90, lat = 33,
     label = "Plaque Nord-Américaine",
     labelOptions = labelOptions(noHide = T, direction = "bottom",
-      style = list(
-        "color" = "black",
-        "font-family" = "arial",
-        "font-style" = "italic",
-        "font-size" = "3"
-      ), opacity = 0.8))%>%
+                                style = list(
+                                  "color" = "black",
+                                  "font-family" = "arial",
+                                  "font-style" = "italic",
+                                  "font-size" = "3"
+                                ), opacity = 0.8))%>%
   addLabelOnlyMarkers(
     lng = -104, lat = -18,
     label = "Plaque de Nazca",
     labelOptions = labelOptions(noHide = T, direction = "bottom",
-      style = list(
-        "color" = "black",
-        "font-family" = "arial",
-        "font-style" = "italic",
-        "font-size" = "3"
-      ), opacity = 0.8))%>%
+                                style = list(
+                                  "color" = "black",
+                                  "font-family" = "arial",
+                                  "font-style" = "italic",
+                                  "font-size" = "3"
+                                ), opacity = 0.8))%>%
   addLabelOnlyMarkers(
     lng = -146, lat = 13,
     label = "Plaque Pacifique",
     labelOptions = labelOptions(noHide = T, direction = "bottom",
-      style = list(
-        "color" = "black",
-        "font-family" = "arial",
-        "font-style" = "italic",
-        "font-size" = "3"
-      ), opacity = 0.8))%>% 
-
-
+                                style = list(
+                                  "color" = "black",
+                                  "font-family" = "arial",
+                                  "font-style" = "italic",
+                                  "font-size" = "3"
+                                ), opacity = 0.8))%>% 
   addLegend (data = div_conv,labels = c( "Convergent", "Divergent"), color = c("green", "purple"), values = ~nature, 
              title = "Mouvement des plaques", 
              position= "bottomright") %>%
   addAwesomeMarkers(data = div,~long, ~lat, icon=icons.div, label=~nature) %>%
   addAwesomeMarkers(data = conv,~long, ~lat, icon=icons.conv, label=~nature) %>%
-  add_titre(titre = "Plaques lithosphériques, convergences et divergences")
+  add_titre(titre = "Plaques lithosphériques, convergences et divergences")%>%
+  addScaleBar(position = "bottomleft")
 
 map_tectonique
 ```
@@ -201,7 +206,7 @@ map_tectonique
 
 Carte des séismes
 =======================================================================
-
+### Carte des séismes de 1965 à 2016
 
 ```{r}
 # Palette de couleur
@@ -258,7 +263,7 @@ map_seismes%>%
 
 ```
 
-Seismes en fonction de l'année
+Séismes en fonction de l'année
 =======================================================================
 
 
@@ -276,3 +281,16 @@ s <-ggplot(data = group_year) +
   labs(fill = "Magnitude \n Moyenne", x = "Année", y="Nombre de séismes")
 s
 ```
+<<<<<<< HEAD
+=======
+
+
+Sources des données 
+===========================================================
+**Données sur les séismes :**  
+Domaine public : National Earthquake Information Center (NEIC)  
+Obtenues sur Kaggle : "Significant Earthquakes, 1965-2016", US Geological Survey
+
+
+
+>>>>>>> ad50e4b9816473754431850d37456aabd1690d17
