@@ -1,5 +1,5 @@
 ---
-title: "Visualisation des séismes et tsunamis dans le monde de 1965 à 2016"
+title: "Quelle relation entre les mouvements relatifs des plaques tectoniques et les zones sismiques"
 author: "Niels André, Floriane Cornué & Marion Corbera"
 output: 
   flexdashboard::flex_dashboard:
@@ -276,3 +276,6 @@ s <-ggplot(data = group_year) +
   labs(fill = "Magnitude \n Moyenne", x = "Année", y="Nombre de séismes")
 s
 ```
+
+
+
