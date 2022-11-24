@@ -188,7 +188,7 @@ map_tectonique <- map_tectonique %>%
       ), opacity = 0.8))%>% 
 
 
-  addLegend (data = div_conv,labels = c("Divergent", "Convergent"), color = c("green", "purple"), values = ~nature, 
+  addLegend (data = div_conv,labels = c( "Convergent", "Divergent"), color = c("green", "purple"), values = ~nature, 
              title = "Mouvement des plaques", 
              position= "bottomright") %>%
   addAwesomeMarkers(data = div,~long, ~lat, icon=icons.div, label=~nature) %>%
