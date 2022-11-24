@@ -1,5 +1,5 @@
 ---
-title: "Quelle relation entre les mouvements relatifs des plaques tectoniques et les zones sismiques"
+title: "Peut-on voir la relation entre les mouvements relatifs des plaques tectoniques et les zones sismiques?"
 author: "Niels André, Floriane Cornué & Marion Corbera"
 output: 
   flexdashboard::flex_dashboard:
