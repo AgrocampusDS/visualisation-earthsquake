@@ -38,3 +38,4 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 flexdashboard_Copie_bugnuls.Rmd
+flexdashboard.html
