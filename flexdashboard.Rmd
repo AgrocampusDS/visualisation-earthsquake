@@ -228,7 +228,8 @@ for (plate1 in plates){ #For each plate
         table1 = data %>% slice((BorneInf + 1):i)
         BorneInf = i
         map_seismes = map_seismes %>% 
-          addPolylines(data = table1, lat = ~lat,lng =~lon,weight = 2,color = "black")
+          addPolylines(data = table1, lat = ~lat, lng =~lon, weight = 3,
+                                                  color = "lightblue")
         
       }
     }
@@ -236,8 +237,8 @@ for (plate1 in plates){ #For each plate
   table1 = data %>%  slice((BorneInf + 1):nrow(data))
   map_seismes = map_seismes %>% addPolylines(data = table1, 
                                              lat = ~lat,
-                                             lng =~lon,weight = 2,
-                                             color = "black")
+                                             lng =~lon,weight = 3,
+                                                  color = "lightblue")
 }
 map_seismes%>% 
   addCircleMarkers(data = data_clean, ~Longitude,
@@ -292,4 +293,4 @@ Obtenues sur Kaggle : "Significant Earthquakes, 1965-2016", US Geological Survey
 
 
 
->>>>>>> ad50e4b9816473754431850d37456aabd1690d17
+
